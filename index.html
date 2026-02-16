@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinhMCPC | Profiler</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --primary: #6c5ce7;
+            --primary-light: #a29bfe;
+            --secondary: #00d2ff;
+            --bg: #030416;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #e1e1f0;
+            --text-muted: #9495b0;
+            --text-white: #ffffff;
+            --radius-xl: 32px;
+            --radius-lg: 20px;
+            --radius-md: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(circle at 0% 0%, rgba(108, 92, 231, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(0, 210, 255, 0.1) 0%, transparent 50%);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            margin-bottom: 80px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin-bottom: 24px;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--border);
+            padding: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            box-shadow: 0 0 30px rgba(108, 92, 231, 0.3);
+        }
+
+        .status-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 28px;
+            height: 28px;
+            background: #23d160;
+            border: 4px solid var(--bg);
+            border-radius: 50%;
+        }
+
+        h1 {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: -2px;
+            margin-bottom: 8px;
+            color: var(--text-white);
+        }
+
+        .bio {
+            font-size: 18px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 8px 20px;
+            border-radius: 40px;
+            margin-bottom: 24px;
+        }
+
+        /* Hub Links */
+        .hub-links {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 80px;
+        }
+
+        .hub-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            padding: 24px;
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hub-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary-light);
+            background: rgba(108, 92, 231, 0.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .hub-card-icon {
+            font-size: 32px;
+        }
+
+        .hub-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-white);
+        }
+
+        /* Section Titles */
+        .section-title {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-white);
+            letter-spacing: -1px;
+        }
+
+        .section-title::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Project List */
+        .project-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .project-item {
+            display: flex;
+            align-items: center;
+            padding: 24px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .project-item:hover {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(10px);
+        }
+
+        .project-info {
+            flex: 1;
+        }
+
+        .project-name {
+            font-weight: 700;
+            color: var(--text-white);
+            font-size: 18px;
+            margin-bottom: 4px;
+        }
+
+        .project-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .project-lang {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 12px;
+            margin-left: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+        }
+
+        .lang-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 100px;
+            text-align: center;
+            padding-bottom: 40px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hub-links {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 36px;
+            }
+
+            .container {
+                padding: 40px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="profile-header">
+            <div class="avatar-container">
+                <img src="https://github.com/minhmcpc.png" alt="MinhMCPC" class="avatar">
+                <div class="status-badge" title="Online"></div>
+            </div>
+            <h1>MinhMCPC</h1>
+            <p class="bio">code kh chạy là do ý trời</p>
+        </div>
+
+        <!-- Main Hub Section -->
+        <div class="hub-links">
+            <a href="tutorial/" class="hub-card" title="Read the documentation">
+                <div class="hub-card-icon">🚀</div>
+                <div class="hub-card-title">Ptero Docs</div>
+            </a>
+            <a href="discord/" class="hub-card" title="Join the community">
+                <div class="hub-card-icon">🏰</div>
+                <div class="hub-card-title">Swordland</div>
+            </a>
+            <a href="corelinks/" class="hub-card" title="Visit the studio">
+                <div class="hub-card-icon">🎨</div>
+                <div class="hub-card-title">Corelinks Studio</div>
+            </a>
+        </div>
+
+        <!-- Projects Section -->
+        <div class="section-title">
+            <span>Pinned Projects</span>
+        </div>
+
+        <div class="project-list">
+            <a href="https://github.com/MinhMCPC/pterodactyl-addons" class="project-item">
+                <div class="project-info">
+                    <div class="project-name">pterodactyl-addons</div>
+                    <div class="project-desc">Free and OpenSource pterodactyl addons.</div>
+                </div>
+                <div class="project-lang"><span class="lang-dot" style="background: #3178c6;"></span>TypeScript</div>
+            </a>
+            <a href="https://github.com/MinhMCPC/Java2Bedrock" class="project-item">
+                <div class="project-info">
+                    <div class="project-name">Java2Bedrock</div>
+                    <div class="project-desc">A tool to convert Java Edition worlds to Bedrock Edition.</div>
+                </div>
+                <div class="project-lang"><span class="lang-dot" style="background: #89e051;"></span>Shell</div>
+            </a>
+            <a href="https://github.com/MinhMCPC/AuthMePE" class="project-item">
+                <div class="project-info">
+                    <div class="project-name">AuthMePE</div>
+                    <div class="project-desc">AuthMe Addon for Pocket Edition.</div>
+                </div>
+                <div class="project-lang"><span class="lang-dot" style="background: #b07219;"></span>Java</div>
+            </a>
+            <a href="https://github.com/MinhMCPC/LightingLuminol" class="project-item">
+                <div class="project-info">
+                    <div class="project-name">LightingLuminol</div>
+                    <div class="project-desc">Luminol的分支，旨在 Folia 上运行更多 bukkit 插件.</div>
+                </div>
+                <div class="project-lang"><span class="lang-dot" style="background: #b07219;"></span>Java</div>
+            </a>
+        </div>
+
+        <footer>
+            <p>&copy; 2026 MinhMCPC. Profiler Version 1.0.0</p>
+        </footer>
+    </div>
+</body>
+
+</html>
